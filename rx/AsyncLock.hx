@@ -54,8 +54,8 @@ class AsyncLock {
                 var work = AtomicData.synchronize((function(l:RxAsyncLockState) {
                     if (l.queue.isEmpty()) {
 
-                        var value = function(l:RxAsyncLockState) { l.is_acquired = false; return l;}(lock.data);
-                        AtomicData.unsafe_set(value, lock);
+                        lock.data.is_acquired = false;
+                        AtomicData.unsafe_set(lock.data, lock);
                         return null;
                     } else {
                         return l.queue.pop() ;

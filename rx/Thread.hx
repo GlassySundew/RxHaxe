@@ -3,6 +3,8 @@ package rx;
 
 #if cpp
     typedef Thread=cpp.vm.Thread;
+#elseif hl
+	typedef Thread = sys.thread.Thread;
 #else
 
 typedef ThreadHandle = Dynamic;
