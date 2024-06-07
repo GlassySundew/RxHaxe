@@ -35,28 +35,29 @@ class Buffer<T> extends Observable<Array<T>> {
                 //lock
                 AtomicData.update_if(function(s:BufferState<T>) {
                     return (s.list.length > 0);
-                }, function(s:BufferState<T>) {
-                    observer.on_next(s.list);
-                    return s;
-                }, state);
+				}, function ( s : BufferState<T> ) {
+					observer.on_next( s.list );
+					return s;
+				}, state );
 
-                observer.on_error(e);
-            },
-            function(v:T) {
-                //lock
-                AtomicData.update_if(function(s:BufferState<T>) {
-                    return (s.list.length < _count);
-                }, function(s:BufferState<T>) {
-                    s.list.push(v);
-                    if (s.list.length == _count) {
-                        observer.on_next(s.list);
-                        s.list = new Array<T>();
-                    }
-                    return s;
-                }, state);
-
-            }
-        );
+				observer.on_error( e );
+			},
+			function ( v : T ) {
+				// lock
+				AtomicData.update_if(
+					function ( s : BufferState<T> ) {
+						return( s.list.length < _count );
+					}, 
+					function ( s : BufferState<T> ) {
+						s.list.push( v );
+						if ( s.list.length == _count ) {
+							observer.on_next( s.list );
+							s.list = new Array<T>();
+						}
+						return s;
+					}, state );
+			}
+		);
 
         return _source.subscribe(buffer_observer);
     }
