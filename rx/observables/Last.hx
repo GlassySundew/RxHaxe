@@ -18,7 +18,7 @@ class Last<T> extends Observable<T> {
 
     override public function subscribe(observer:IObserver<T>):ISubscription {
         var notPublished:Bool = true;
-        var lastValue:Null<T>;
+        var lastValue:Null<T> = null;
         var defaultIfEmpty_observer = Observer.create(
             function() {
                 if (notPublished) {
