@@ -1,5 +1,9 @@
 package rx;
 
+import haxe.extern.EitherType;
+import haxe.Constraints.Function;
+import rx.observables.BufferWhen;
+import rx.observables.BufferCount;
 import rx.Core.RxObserver;
 import rx.Core.RxSubscription;
 // Creating Observables
@@ -72,6 +76,11 @@ import rx.observers.IObserver;
 import rx.notifiers.Notification;
 import rx.schedulers.IScheduler;
 
+typedef Signal<T> = {
+	function add<T>( callback : ( T ) -> Void ) : Signal<T>;
+	function remove<T>( callback : EitherType<Bool, ( T ) -> Void> ) : Void;
+}
+
 class ObservableFactory {
 
 	static public function find<T>( observable : Observable<T>, comparer : Null<T -> Bool> ) {
@@ -134,8 +143,12 @@ class ObservableFactory {
 		return new Catch( observable, errorHandler );
 	}
 
-	static public function buffer<T>( observable : Observable<T>, count : Int ) {
-		return new Buffer( observable, count );
+	static public function bufferWhen<T>( observable : Observable<T>, closingSelector : () -> IObservable<T> ) {
+		return new BufferWhen( observable, closingSelector );
+	}
+
+	static public function bufferCount<T>( observable : Observable<T>, count : Int ) {
+		return new BufferCount( observable, count );
 	}
 
 	static public function observer<T>( observable : Observable<T>, fun : T -> Void ) {
@@ -208,5 +221,16 @@ class ObservableFactory {
 
 	static public function bind<T, R>( observable : Observable<T>, f : T -> Observable<R> ) {
 		return merge( map( observable, f ) );
+	}
+
+	public static function fromSignal<T>( signal : Signal<T> ) : Observable<T> {
+		var observable = Observable.create( ( observer ) -> {
+			var cb = ( value ) -> observer.on_next( value );
+			signal.add( cb );
+
+			return Subscription.create(() -> signal.remove( cb ) );
+		} );
+
+		return observable;
 	}
 }

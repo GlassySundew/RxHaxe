@@ -47,7 +47,7 @@ class Subject<T> extends Observable<T> implements ISubject<T> {
     }
 
     inline function update(f:Array<IObserver<T>> -> Array<IObserver<T>>) return AtomicData.update(f, observers);
-
+	
     inline function sync(f:Array<IObserver<T>> -> Array<IObserver<T>>) return AtomicData.synchronize(f, observers);
 
     inline function iter(f:IObserver<T> -> IObserver<T>) return sync(function(os:Array<IObserver<T>>) return os.map(f));

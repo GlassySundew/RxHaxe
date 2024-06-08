@@ -1,28 +1,33 @@
 package rx.observables;
 
 import rx.disposables.Composite;
-import rx.disposables.ISubscription;
+import rx.disposables.SingleAssignment;
 import rx.observables.BufferCount.BufferState;
+import rx.disposables.ISubscription;
 import rx.observers.IObserver;
 
-class Buffer<T> extends Observable<Array<T>> {
+class BufferWhen<T> extends Observable<Array<T>> {
 
 	var _source : IObservable<T>;
-	var _closingNotifier : IObservable<T>;
+	var _closingSelector : () -> IObservable<T>;
 
-	public function new( source : IObservable<T>, closingNotifier : IObservable<T> ) {
+	public function new( source : IObservable<T>, closingSelector : () -> IObservable<T> ) {
 		super();
 		_source = source;
-		_closingNotifier = closingNotifier;
+		_closingSelector = closingSelector;
 	}
 
 	override public function subscribe( observer : IObserver<Array<T>> ) : ISubscription {
 		var state = AtomicData.create( { list : new Array<T>() } );
 
 		var __unsubscribe = Composite.create();
+		var selectorSubscription : ISubscription = null;
 
 		var observerSource = Observer.create(
-			observer.on_completed,
+			function () {
+				selectorSubscription.unsubscribe();
+				observer.on_completed();
+			},
 			observer.on_error,
 			function ( v : T ) {
 				AtomicData.update(
@@ -33,7 +38,8 @@ class Buffer<T> extends Observable<Array<T>> {
 			}
 		);
 
-		var observerNotifier = Observer.create(
+		var observerNotifier : Observer<T> = null;
+		observerNotifier = Observer.create(
 			function () {
 				observer.on_next( AtomicData.unsafe_get( state ).list );
 			},
@@ -43,6 +49,8 @@ class Buffer<T> extends Observable<Array<T>> {
 			function ( v : T ) {
 				AtomicData.update(
 					( s : BufferState<T> ) -> {
+						selectorSubscription.unsubscribe();
+						selectorSubscription = _closingSelector().subscribe( observerNotifier );
 						observer.on_next( s.list );
 						s.list = new Array<T>();
 						return s;
@@ -53,8 +61,9 @@ class Buffer<T> extends Observable<Array<T>> {
 		);
 
 		__unsubscribe.add( _source.subscribe( observerSource ) );
-		__unsubscribe.add( _closingNotifier.subscribe( observerNotifier ) );
-		
+		selectorSubscription = _closingSelector().subscribe( observerNotifier );
+		__unsubscribe.add( selectorSubscription );
+
 		return __unsubscribe;
 	}
 }

@@ -1,5 +1,6 @@
 package rx;
 
+import rx.observables.BufferCount;
 import rx.Core.RxObserver;
 import rx.Core.RxSubscription;
 // Creating Observables
@@ -200,8 +201,8 @@ class Observable<T> implements IObservable<T> {
 		return new Catch( this, errorHandler );
 	}
 
-	public function buffer( count : Int ) {
-		return new Buffer( this, count );
+	public function bufferCount( count : Int ) {
+		return new BufferCount( this, count );
 	}
 
 	public function observe( fun : T -> Void ) {
