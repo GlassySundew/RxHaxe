@@ -60,7 +60,7 @@ class SubscribeOfEnum<T> extends Observable<T> {
      * https://github.com/Netflix/RxJava/blob/master/rxjava-core/src/main/java/rx/operators/OperationInterval.java
      *
      **/
-class SubscribeInterval<T> extends Observable<T> {
+class SubscribeInterval extends Observable<Int> {
     var period:Float;
     var scheduler:IScheduler;
 
@@ -70,7 +70,7 @@ class SubscribeInterval<T> extends Observable<T> {
         this.scheduler = scheduler;
     }
 
-    override public function subscribe(observer:IObserver<T>):ISubscription {
+    override public function subscribe(observer:IObserver<Int>):ISubscription {
         var counter = AtomicData.create(0);
         var succ = function(count:Int):Int {
             //trace(count);
