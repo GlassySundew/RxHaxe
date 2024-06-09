@@ -1,84 +1,83 @@
 package rx;
+
 import rx.AtomicData;
+
 typedef RxAsyncLockState = {
-    var queue:List<Void -> Void>;
-    var is_acquired:Bool;
-    var has_faulted:Bool;
+	var queue : List<Void -> Void>;
+	var is_acquired : Bool;
+	var has_faulted : Bool;
 }
 
 class AsyncLock {
-    var lock:AtomicData<RxAsyncLockState>;
 
-    public function new() {
-        var async:RxAsyncLockState = {
-            queue:new List<Void -> Void>(),
-            is_acquired : false,
-            has_faulted : false
-        };
-        lock = AtomicData.create(async);
+	var lock : AtomicData<RxAsyncLockState>;
 
-    }
+	public function new() {
+		var async : RxAsyncLockState = {
+			queue : new List<Void -> Void>(),
+			is_acquired : false,
+			has_faulted : false
+		};
+		lock = AtomicData.create( async );
+	}
 
-    static public function create() {
-        return new AsyncLock();
-    }
+	static public function create() {
+		return new AsyncLock();
+	}
 
+	public function dispose() {
+		AtomicData.update(( function ( l ) {
+			l.queue.clear();
+			l.has_faulted = true;
+			return l;
+		} )
+			, lock
+		);
+	}
 
-    public function dispose() {
-        AtomicData.update((function(l) {
-            l.queue.clear();
-            l.has_faulted = true;
-            return l;
-        })
-        , lock
-        );
+	public function wait( action : Void -> Void ) {
 
-    }
+		var old_state = AtomicData.update_if(
+			( function ( l : RxAsyncLockState ) {
+				return !l.has_faulted;
+			} ),
+			( function ( l : RxAsyncLockState ) {
+				l.queue.push( action );
+				l.is_acquired = true;
+				return l;
+			} ), lock );
+		var is_owner = !old_state.is_acquired;
 
+		if ( is_owner ) {
 
-    public function wait(action:Void -> Void) {
+			while ( true ) {
 
-        var old_state = AtomicData.update_if(
-            ( function(l:RxAsyncLockState) { return !l.has_faulted;}),
-            (function(l:RxAsyncLockState) {
-                l.queue.push(action);
-                l.is_acquired = true;
-                return l;
-            }), lock);
-        var is_owner = !old_state.is_acquired;
+				var work = AtomicData.synchronize(
+					( function ( l : RxAsyncLockState ) {
+						if ( l.queue.isEmpty() ) {
 
-        if (is_owner) {
+							lock.data.is_acquired = false;
+							AtomicData.unsafe_set( lock.data, lock );
+							return null;
+						} else {
+							return l.queue.pop();
+						}
+					} ), lock );
 
-            while (true) {
+				if ( work != null ) {
+					var w = work;
+					try {
+						w();
+					}
+					catch( msg : String ) {
 
-                var work = AtomicData.synchronize((function(l:RxAsyncLockState) {
-                    if (l.queue.isEmpty()) {
-
-                        lock.data.is_acquired = false;
-                        AtomicData.unsafe_set(lock.data, lock);
-                        return null;
-                    } else {
-                        return l.queue.pop() ;
-                    }
-                }), lock) ;
-
-                if (work != null) {
-                    var w = work;
-                    try {
-                        w();
-                    }
-                    catch (msg:String) {
-
-                        dispose();
-                        throw msg;
-                    }
-                } else {
-                    break;
-                }
-
-            }
-
-        }
-
-    }
+						dispose();
+						throw msg;
+					}
+				} else {
+					break;
+				}
+			}
+		}
+	}
 }
