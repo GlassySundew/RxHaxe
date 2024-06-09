@@ -11,6 +11,7 @@ class BufferWhen<T> extends Observable<Array<T>> {
 	var _source : IObservable<T>;
 	var _closingSelector : () -> IObservable<T>;
 
+
 	public function new( source : IObservable<T>, closingSelector : () -> IObservable<T> ) {
 		super();
 		_source = source;
@@ -41,6 +42,7 @@ class BufferWhen<T> extends Observable<Array<T>> {
 		var observerNotifier : Observer<T> = null;
 		observerNotifier = Observer.create(
 			function () {
+				trace("completed buffer");
 				observer.on_next( AtomicData.unsafe_get( state ).list );
 			},
 			function ( e : String ) {
@@ -51,6 +53,7 @@ class BufferWhen<T> extends Observable<Array<T>> {
 					( s : BufferState<T> ) -> {
 						selectorSubscription.unsubscribe();
 						selectorSubscription = _closingSelector().subscribe( observerNotifier );
+						__unsubscribe.add( selectorSubscription );
 						observer.on_next( s.list );
 						s.list = new Array<T>();
 						return s;

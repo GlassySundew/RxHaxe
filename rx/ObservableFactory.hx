@@ -77,8 +77,8 @@ import rx.notifiers.Notification;
 import rx.schedulers.IScheduler;
 
 typedef Signal<T> = {
-	function add<T>( callback : ( T ) -> Void ) : Signal<T>;
-	function remove<T>( callback : EitherType<Bool, ( T ) -> Void> ) : Void;
+	function add( callback : ( T ) -> Void ) : Signal<T>;
+	function remove( callback : EitherType<Bool, ( T ) -> Void> ) : Void;
 }
 
 class ObservableFactory {
@@ -137,6 +137,10 @@ class ObservableFactory {
 
 	static public function combineLatest<T, R>( observable : Observable<T>, source : Array<Observable<T>>, combinator : Array<T> -> R ) {
 		return new CombineLatest( [observable].concat( source ), combinator );
+	}
+
+	public static function interval( period : Float, ?scheduler : IScheduler ) {
+		return new SubscribeInterval( period, scheduler );
 	}
 
 	static public function of_catch<T>( observable : Observable<T>, errorHandler : String -> Observable<T> ) {
@@ -224,8 +228,8 @@ class ObservableFactory {
 	}
 
 	public static function fromSignal<T>( signal : Signal<T> ) : Observable<T> {
-		var observable = Observable.create( ( observer ) -> {
-			var cb = ( value ) -> observer.on_next( value );
+		var observable : Observable<T> = Observable.create( ( observer : IObserver<T> ) -> {
+			var cb = ( value : T ) -> observer.on_next( value );
 			signal.add( cb );
 
 			return Subscription.create(() -> signal.remove( cb ) );

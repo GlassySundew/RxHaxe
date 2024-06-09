@@ -1,5 +1,6 @@
 package rx;
 
+import rx.observables.BufferWhen;
 import rx.observables.BufferCount;
 import rx.Core.RxObserver;
 import rx.Core.RxSubscription;
@@ -159,9 +160,9 @@ class Observable<T> implements IObservable<T> {
 		return new Distinct( this, comparer );
 	}
 
-	public function delay( source : Observable<T>, dueTime : Float, ?scheduler : Null<IScheduler> ) {
+	public function delay( dueTime : Float, ?scheduler : Null<IScheduler> ) {
 		if ( scheduler == null ) scheduler = Scheduler.timeBasedOperations;
-		return new Delay( source, haxe.Timer.stamp() + dueTime, scheduler );
+		return new Delay( this, haxe.Timer.stamp() + dueTime, scheduler );
 	}
 
 	public function timestamp( source : Observable<T>, ?scheduler : Null<IScheduler> ) {
@@ -201,8 +202,20 @@ class Observable<T> implements IObservable<T> {
 		return new Catch( this, errorHandler );
 	}
 
+	public function buffer( count : Int, closingNotifier : IObservable<T> ) {
+		return new Buffer( this, closingNotifier );
+	}
+
 	public function bufferCount( count : Int ) {
 		return new BufferCount( this, count );
+	}
+
+	public function bufferWhen( closingSelector : () -> IObservable<T> ) {
+		return new BufferWhen( this, closingSelector );
+	}
+
+	public function throttle( dueTime : Float, ?scheduler : IScheduler ) {
+		return new Throttle( this, dueTime, scheduler );
 	}
 
 	public function observe( fun : T -> Void ) {
