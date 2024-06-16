@@ -112,10 +112,10 @@ class Observable<T> implements IObservable<T> {
 		return new Return( __args );
 	}
 
-	static public function of_enum<T>( __args : Array<T> ) : Observable<T> {
+	static public function ofIterable<T>( __args : Iterable<T> ) : Observable<T> {
 		return new Create( function ( observer : IObserver<T> ) {
-			for ( i in 0...__args.length ) {
-				observer.on_next( __args[i] );
+			for ( i in __args ) {
+				observer.on_next( i );
 			}
 			observer.on_completed();
 			return Subscription.empty();
@@ -262,8 +262,8 @@ class Observable<T> implements IObservable<T> {
 		return new Single( observable );
 	}
 
-	public function append( observable1 : Observable<T>, observable2 : Observable<T> ) {
-		return new Append( observable1, observable2 );
+	public function append( observable2 : Observable<T> ) {
+		return new Append( this, observable2 );
 	}
 
 	public function map<R>( f : T -> R ) {
