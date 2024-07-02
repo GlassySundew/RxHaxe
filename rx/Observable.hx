@@ -112,16 +112,6 @@ class Observable<T> implements IObservable<T> {
 		return new Return( __args );
 	}
 
-	static public function ofIterable<T>( __args : Iterable<T> ) : Observable<T> {
-		return new Create( function ( observer : IObserver<T> ) {
-			for ( i in __args ) {
-				observer.on_next( i );
-			}
-			observer.on_completed();
-			return Subscription.empty();
-		} );
-	}
-
 	static public function fromRange( ?initial : Null<Int>, ?limit : Null<Int>, ?step : Null<Int> ) {
 		if ( limit == null && step == null ) {
 			initial = 0;
@@ -242,24 +232,20 @@ class Observable<T> implements IObservable<T> {
 		return new Skip( this, n );
 	}
 
-	public function skip_until( observable1 : Observable<T>, observable2 : Observable<T> ) {
-		return new SkipUntil( observable1, observable2 );
+	public function skip_until( observable2 : Observable<T> ) {
+		return new SkipUntil( this, observable2 );
 	}
 
 	public function take( n : Int ) {
 		return new Take( this, n );
 	}
 
-	public function take_until( observable1 : Observable<T>, observable2 : Observable<T> ) {
-		return new TakeUntil( observable1, observable2 );
+	public function take_until( observable2 : Observable<T> ) {
+		return new TakeUntil( this, observable2 );
 	}
 
 	public function take_last( n : Int ) {
 		return new TakeLast( this, n );
-	}
-
-	public function single( observable : Observable<T> ) {
-		return new Single( observable );
 	}
 
 	public function append( observable2 : Observable<T> ) {
