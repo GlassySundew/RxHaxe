@@ -189,10 +189,6 @@ class ObservableFactory {
 		return new Length( observable );
 	}
 
-	static public function drop<T>( observable : Observable<T>, n : Int ) {
-		return skip( observable, n );
-	}
-
 	static public function skip<T>( observable : Observable<T>, n : Int ) {
 		return new Skip( observable, n );
 	}

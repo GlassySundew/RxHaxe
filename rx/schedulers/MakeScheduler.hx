@@ -61,7 +61,6 @@ class MakeScheduler implements IScheduler {
 			action();
 			var time_taken = ( now() ) - started_at;
 			var delay = period - time_taken;
-			trace( delay );
 			var unsubscribe2 = schedule_relative( delay, function () {
 				loop( completed, period, action, parent );
 			} );

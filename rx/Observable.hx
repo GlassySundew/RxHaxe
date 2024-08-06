@@ -67,6 +67,7 @@ import rx.observables.Blocking;
 import rx.observables.CurrentThread;
 import rx.observables.Immediate;
 import rx.observables.NewThread;
+import rx.observables.EndWith;
 import rx.observables.Test;
 import rx.observables.IObservable;
 import rx.disposables.ISubscription;
@@ -166,6 +167,10 @@ class Observable<T> implements IObservable<T> {
 
 	public function last( ?source : Null<T> ) {
 		return new Last( this, source );
+	}
+
+	public function endWith( value : T ) {
+		return new EndWith( this, value );
 	}
 
 	public function first( ?source : Null<T> ) {
