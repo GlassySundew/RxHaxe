@@ -232,15 +232,8 @@ class ObservableFactory {
 	static public function bind<T, R>( observable : Observable<T>, f : T -> Observable<R> ) {
 		return merge( map( observable, f ) );
 	}
-	
-	public static function fromSignal<T>( signal : Signal<T> ) : Observable<T> {
-		var observable : Observable<T> = Observable.create( ( observer : IObserver<T> ) -> {
-			var cb = ( value : T ) -> observer.on_next( value );
-			signal.add( cb );
 
-			return Subscription.create(() -> signal.remove( cb ) );
-		} );
-
-		return observable;
+	public static function fromSignal<T>( signal : signals.Signal<T> ) : Observable<T> {
+		return new rx.observables.Signal( signal );
 	}
 }

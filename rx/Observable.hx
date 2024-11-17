@@ -1,5 +1,6 @@
 package rx;
 
+import haxe.exceptions.NotImplementedException;
 import rx.observables.BufferWhen;
 import rx.observables.BufferCount;
 import rx.Core.RxObserver;
@@ -86,7 +87,7 @@ class Observable<T> implements IObservable<T> {
 	public function new() {}
 
 	public function subscribe( observer : IObserver<T> ) : ISubscription {
-		return Subscription.empty();
+		throw new NotImplementedException();
 	}
 	public static var currentThread : CurrentThread = new CurrentThread();
 	public static var newThread : NewThread = new NewThread();
