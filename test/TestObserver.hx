@@ -7,7 +7,9 @@ import rx.observers.SynchronizedObserver;
 import rx.observers.AsyncLockObserver;
 import rx.observers.IObserver;
 import rx.Observer;
-class TestObserver extends haxe.unit.TestCase {
+import utest.Test;
+
+class TestObserver extends Test {
    function incr(i) return  i+1;
 public  function test_create_on_next (){
     var v = AtomicData.create(0);

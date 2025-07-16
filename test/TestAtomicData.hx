@@ -1,7 +1,9 @@
 package test;
 import rx.AtomicData;
 import rx.Thread;
-class TestAtomicData extends haxe.unit.TestCase {
+import utest.Test;
+
+class TestAtomicData extends Test {
 
 public  function test_unsafe_get (){
     var v = AtomicData.create(0)  ;

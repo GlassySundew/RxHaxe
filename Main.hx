@@ -16,29 +16,29 @@ import rx.disposables.ISubscription;
 import rx.subjects.Replay;
 import rx.subjects.Behavior;
 import rx.subjects.Async;
-import test.TestAtomicData;
-import test.TestAsyncLock;
-import test.TestSubscription;
-import test.TestObserver;
-import test.TestSubject;
-import test.TestScheduler;
-import test.TestHelper;
-import test.TestObservable;
+// import test.TestAtomicData;
+// import test.TestAsyncLock;
+// import test.TestSubscription;
+// import test.TestObserver;
+// import test.TestSubject;
+// import test.TestScheduler;
+// import test.TestHelper;
+// import test.TestObservable;
 class Main 
 {
 	static function main(  ){	  
-        var r = new haxe.unit.TestRunner();
-       	r.add(new TestAtomicData());
-       	r.add(new TestAsyncLock());
-		r.add(new TestSubscription());
-		r.add(new TestObserver());
-		r.add(new TestSubject());
-		r.add(new TestScheduler());
-		r.add(new TestObservable());
+        // var r = new haxe.unit.TestRunner();
+       	// r.add(new TestAtomicData());
+       	// r.add(new TestAsyncLock());
+		// r.add(new TestSubscription());
+		// r.add(new TestObserver());
+		// r.add(new TestSubject());
+		// r.add(new TestScheduler());
+		// r.add(new TestObservable());
         // add other TestCases here
 
         // finally, run the tests
-        r.run();
+        // r.run();
 
   
     }

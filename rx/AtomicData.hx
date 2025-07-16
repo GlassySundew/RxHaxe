@@ -5,7 +5,7 @@ class AtomicData<T> {
     public var data:T;
     public var mutex:Mutex ;
 
-    public function new() {}
+    public inline  function new() {}
 
     public static function clone<T>(v:T):T {
 
@@ -29,7 +29,7 @@ class AtomicData<T> {
         return value;
     }
 
-    static public function create<T>(initial_value:T) {
+    static public inline function create<T>(initial_value:T) {
 
         var t:AtomicData<T> = new AtomicData<T>();
         t.data = initial_value;

@@ -35,11 +35,11 @@ class Composite implements ISubscription {
     var state:AtomicData<RxCompositeState>;
 
 
-    static public function create(?subscriptions:Array<ISubscription>) {
+    static public inline function create(?subscriptions:Array<ISubscription>) {
         return new Composite(subscriptions);
     }
 
-    public function new(?_subscriptions:Array<ISubscription>) {
+    public inline function new(?_subscriptions:Array<ISubscription>) {
         var stat:RxCompositeState = {
             is_unsubscribed:false,
             subscriptions :_subscriptions != null ? _subscriptions : new Array<ISubscription>()

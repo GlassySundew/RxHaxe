@@ -1,6 +1,7 @@
 package test;
 import rx.AsyncLock;
-class TestAsyncLock extends haxe.unit.TestCase {
+import utest.Test;
+class TestAsyncLock extends Test {
 
     public function test_wait_graceful(){
         var ok =   false;

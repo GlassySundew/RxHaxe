@@ -19,17 +19,8 @@ class Append<T> extends Observable<T> {
     override public function subscribe(observer:IObserver<T>):ISubscription {
 
         var __unsubscribe = Composite.create();
-        var o1_observer = Observer.create(
-            function() {
-                __unsubscribe.add(_source2.subscribe(observer));
-            },
-            observer.on_error,
-            function(v:T) {
-                observer.on_next(v);
-            }
-        );
-
-        __unsubscribe.add(_source1.subscribe(o1_observer));
+        __unsubscribe.add(_source1.subscribe(observer));
+        __unsubscribe.add(_source2.subscribe(observer));
         return __unsubscribe;
     }
 }

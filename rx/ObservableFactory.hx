@@ -233,7 +233,7 @@ class ObservableFactory {
 		return merge( map( observable, f ) );
 	}
 
-	public static function fromSignal<T>( signal : signals.Signal<T> ) : Observable<T> {
+	public static function fromSignal<T>( signal : signals.Signal1<T> ) : Observable<T> {
 		return new rx.observables.Signal( signal );
 	}
 }

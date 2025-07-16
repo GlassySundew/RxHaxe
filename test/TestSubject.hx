@@ -11,7 +11,9 @@ import rx.Subject;
 import rx.subjects.Replay;
 import rx.subjects.Behavior;
 import rx.subjects.Async;
-class TestSubject extends haxe.unit.TestCase {
+import utest.Test;
+
+class TestSubject extends Test {
    function incr(i) return  i+1;
 
    public  function test_create_subject (){

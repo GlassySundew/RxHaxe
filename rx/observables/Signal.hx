@@ -5,9 +5,9 @@ import rx.disposables.ISubscription;
 
 class Signal<T> extends Observable<T> {
 
-	final signal : signals.Signal<T>;
+	final signal : signals.Signal1<T>;
 
-	public function new( signal : signals.Signal<T> ) {
+	public function new( signal : signals.Signal1<T> ) {
 		super();
 		this.signal = signal;
 	}

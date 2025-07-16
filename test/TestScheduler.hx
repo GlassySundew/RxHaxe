@@ -18,7 +18,9 @@ import rx.schedulers.TimedAction;
 import rx.Scheduler;
 import rx.Subscription;
 import rx.Utils;
-class TestScheduler extends haxe.unit.TestCase {
+import utest.Test;
+
+class TestScheduler extends Test {
    function incr(i) return  i+1;
     public function test_current_thread_schedule_ (){
         var str="";

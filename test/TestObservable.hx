@@ -15,6 +15,7 @@ import rx.Utils;
 import rx.schedulers.IScheduler;
 import rx.observables.MakeScheduled;
 import rx.Subject;
+import utest.Test;
 class SchedulerBase implements IScheduler {
 
     public var schedule_count:Int;
@@ -49,7 +50,7 @@ class ScheduledObservable extends  MakeScheduled
 
    
 
-class TestObservable extends haxe.unit.TestCase {
+class TestObservable extends Test {
 
     public  function test_of_enum  (){
         var items = ["one", "two","three"] ;

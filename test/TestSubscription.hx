@@ -11,7 +11,9 @@ import rx.disposables.ISubscription;
 
 import rx.Subscription;
 import rx.Thread;
-class TestSubscription extends haxe.unit.TestCase {
+import utest.Test;
+
+class TestSubscription extends Test {
 
     function incr(i) return  i+1;
     public function test_unsubscribe_only_once(){ 
